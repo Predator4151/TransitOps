@@ -74,7 +74,7 @@ const Drivers = () => {
       reset({
         name: '',
         licenseNumber: '',
-        licenseCategory: 'Class C',
+        licenseCategory: 'LMV',
         licenseExpiryDate: '',
         phoneNumber: '',
         safetyScore: 100,
@@ -392,10 +392,11 @@ const Drivers = () => {
                     <div className="col-12 col-sm-6">
                       <label className="form-label text-secondary small fw-medium">License Category</label>
                       <select className="form-select" {...register('licenseCategory', { required: true })}>
-                        <option value="Class C">Class C</option>
-                        <option value="Class B">Class B</option>
-                        <option value="Class A">Class A</option>
-                        <option value="Commercial">Commercial</option>
+                        <option value="LMV">LMV – Light Motor Vehicle</option>
+                        <option value="MGV">MGV – Medium Goods Vehicle</option>
+                        <option value="HMV">HMV – Heavy Motor Vehicle</option>
+                        <option value="LGV">LGV – Light Goods Vehicle</option>
+                        <option value="PSV">PSV – Passenger Service Vehicle</option>
                       </select>
                     </div>
 

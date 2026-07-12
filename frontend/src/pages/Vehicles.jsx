@@ -71,7 +71,7 @@ const Vehicles = () => {
         registrationNumber: '',
         name: '',
         model: '',
-        type: 'Van',
+        type: 'LMV',
         maxLoadCapacity: '',
         currentOdometer: '',
         acquisitionCost: '',
@@ -193,13 +193,12 @@ const Vehicles = () => {
               value={typeFilter}
               onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}
             >
-              <option value="">All Types</option>
-              <option value="Van">Van</option>
-              <option value="Sprinter">Sprinter</option>
-              <option value="Semi">Semi</option>
-              <option value="Truck">Truck</option>
-              <option value="Cargo Van">Cargo Van</option>
-              <option value="Flatbed">Flatbed</option>
+              <option value="">All Categories</option>
+              <option value="LMV">LMV – Light Motor Vehicle</option>
+              <option value="MGV">MGV – Medium Goods Vehicle</option>
+              <option value="HMV">HMV – Heavy Motor Vehicle</option>
+              <option value="LGV">LGV – Light Goods Vehicle</option>
+              <option value="PSV">PSV – Passenger Service Vehicle</option>
             </select>
           </div>
 
@@ -375,14 +374,13 @@ const Vehicles = () => {
 
                     {/* Type */}
                     <div className="col-12 col-sm-6">
-                      <label className="form-label text-secondary small fw-medium">Vehicle Type</label>
+                      <label className="form-label text-secondary small fw-medium">Vehicle Category</label>
                       <select className="form-select" {...register('type', { required: true })}>
-                        <option value="Van">Van</option>
-                        <option value="Sprinter">Sprinter</option>
-                        <option value="Semi">Semi</option>
-                        <option value="Truck">Truck</option>
-                        <option value="Cargo Van">Cargo Van</option>
-                        <option value="Flatbed">Flatbed</option>
+                        <option value="LMV">LMV – Light Motor Vehicle</option>
+                        <option value="MGV">MGV – Medium Goods Vehicle</option>
+                        <option value="HMV">HMV – Heavy Motor Vehicle</option>
+                        <option value="LGV">LGV – Light Goods Vehicle</option>
+                        <option value="PSV">PSV – Passenger Service Vehicle</option>
                       </select>
                     </div>
 

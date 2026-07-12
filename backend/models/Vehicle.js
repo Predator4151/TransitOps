@@ -20,9 +20,9 @@ const VehicleSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    required: [true, 'Please add a vehicle type'],
-    enum: ['Truck', 'Van', 'Semi', 'Cargo Van', 'Flatbed', 'Sprinter'],
-    default: 'Van'
+    required: [true, 'Please add a vehicle category'],
+    enum: ['LMV', 'MGV', 'HMV', 'LGV', 'PSV'],
+    default: 'LMV'
   },
   maxLoadCapacity: {
     type: Number,

@@ -15,8 +15,8 @@ const DriverSchema = new mongoose.Schema({
   licenseCategory: {
     type: String,
     required: [true, 'Please add license category'],
-    enum: ['Class A', 'Class B', 'Class C', 'Commercial'],
-    default: 'Class C'
+    enum: ['LMV', 'MGV', 'HMV', 'LGV', 'PSV'],
+    default: 'LMV'
   },
   licenseExpiryDate: {
     type: Date,

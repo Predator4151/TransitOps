@@ -16,6 +16,7 @@ import FuelLogs from './pages/FuelLogs';
 import Expenses from './pages/Expenses';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
+import Compliance from './pages/Compliance';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="expenses" element={<Expenses />} />
             <Route path="reports" element={<Reports />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="compliance" element={<Compliance />} />
           </Route>
 
           {/* Catch-all Routing Redirect */}

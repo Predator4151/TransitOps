@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 const rolePathAccess = {
   'Fleet Manager': ['/vehicles', '/maintenance', '/settings'],
   'Dispatcher': ['/', '/trips', '/settings'],
-  'Safety Officer': ['/drivers', '/settings'],
+  'Safety Officer': ['/drivers', '/compliance', '/settings'],
   'Financial Analyst': ['/fuel', '/expenses', '/reports', '/settings']
 };
 
@@ -67,6 +67,7 @@ const DashboardLayout = () => {
     { name: 'Fuel Logs', icon: 'bi-fuel-pump', path: '/fuel' },
     { name: 'Expenses', icon: 'bi-cash-coin', path: '/expenses' },
     { name: 'Reports', icon: 'bi-bar-chart-line', path: '/reports' },
+    { name: 'Compliance', icon: 'bi-shield-check', path: '/compliance' },
     { name: 'Settings', icon: 'bi-gear', path: '/settings' }
   ];
 

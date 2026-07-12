@@ -36,7 +36,7 @@ const Compliance = () => {
 
   // Calculations for compliance metrics
   const totalDrivers = driversList.length;
-  const expiredLicenses = driversList.filter(d => new Date(d.licenseExpiry) < new Date()).length;
+  const expiredLicenses = driversList.filter(d => new Date(d.licenseExpiryDate) < new Date()).length;
   const criticalSafety = driversList.filter(d => (d.safetyScore || 0) < 70).length;
   
   // Compliance Rate is the average of safety score of every driver who is not suspended
@@ -51,8 +51,8 @@ const Compliance = () => {
     setSuccessMessage('');
     setValue('licenseNumber', driver.licenseNumber);
     // Format date string to YYYY-MM-DD for date input
-    const formattedDate = driver.licenseExpiry ? new Date(driver.licenseExpiry).toISOString().split('T')[0] : '';
-    setValue('licenseExpiry', formattedDate);
+    const formattedDate = driver.licenseExpiryDate ? new Date(driver.licenseExpiryDate).toISOString().split('T')[0] : '';
+    setValue('licenseExpiryDate', formattedDate);
     setValue('safetyScore', driver.safetyScore || 100);
     setModalOpen(true);
   };
@@ -64,7 +64,7 @@ const Compliance = () => {
     try {
       const payload = {
         licenseNumber: data.licenseNumber,
-        licenseExpiry: data.licenseExpiry,
+        licenseExpiryDate: data.licenseExpiryDate,
         safetyScore: parseInt(data.safetyScore, 10)
       };
 
@@ -73,7 +73,7 @@ const Compliance = () => {
         // Update local state immediately for real-time Compliance Rate recalculation
         setDriversList(prev => prev.map(d => 
           d._id === currentDriver._id 
-            ? { ...d, licenseNumber: payload.licenseNumber, licenseExpiry: payload.licenseExpiry, safetyScore: payload.safetyScore }
+            ? { ...d, licenseNumber: payload.licenseNumber, licenseExpiryDate: payload.licenseExpiryDate, safetyScore: payload.safetyScore }
             : d
         ));
         
@@ -230,8 +230,8 @@ const Compliance = () => {
                       <span className="text-muted fs-8">{driver.email}</span>
                     </td>
                     <td><code className="text-secondary">{driver.licenseNumber}</code></td>
-                    <td>{new Date(driver.licenseExpiry).toLocaleDateString()}</td>
-                    <td>{getExpiryBadge(driver.licenseExpiry)}</td>
+                    <td>{new Date(driver.licenseExpiryDate).toLocaleDateString()}</td>
+                    <td>{getExpiryBadge(driver.licenseExpiryDate)}</td>
                     <td className={getSafetyScoreColor(driver.safetyScore || 100)}>
                       {driver.safetyScore || 100} / 100
                     </td>
@@ -295,10 +295,10 @@ const Compliance = () => {
                     <label className="form-label text-secondary small fw-semibold">License Expiration Date</label>
                     <input 
                       type="date" 
-                      className={`form-control ${errors.licenseExpiry ? 'is-invalid' : ''}`}
-                      {...register('licenseExpiry', { required: 'Expiration date is required' })}
+                      className={`form-control ${errors.licenseExpiryDate ? 'is-invalid' : ''}`}
+                      {...register('licenseExpiryDate', { required: 'Expiration date is required' })}
                     />
-                    {errors.licenseExpiry && <div className="invalid-feedback">{errors.licenseExpiry.message}</div>}
+                    {errors.licenseExpiryDate && <div className="invalid-feedback">{errors.licenseExpiryDate.message}</div>}
                   </div>
 
                   {/* Safety Score */}

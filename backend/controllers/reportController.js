@@ -76,7 +76,8 @@ exports.getDashboardData = async (req, res) => {
       notifications.push({
         type: days < 0 ? 'danger' : 'warning',
         message: `Driver ${d.name}'s license ${days < 0 ? 'expired' : 'is expiring in ' + days + ' days'} (${new Date(d.licenseExpiryDate).toLocaleDateString()})`,
-        time: 'License Alert'
+        time: 'License Alert',
+        path: '/compliance'
       });
     });
 
@@ -86,7 +87,8 @@ exports.getDashboardData = async (req, res) => {
       notifications.push({
         type: 'info',
         message: `Vehicle ${v.registrationNumber} (${v.name}) is currently In Shop for maintenance.`,
-        time: 'Maintenance Alert'
+        time: 'Maintenance Alert',
+        path: '/maintenance'
       });
     });
 
@@ -96,7 +98,8 @@ exports.getDashboardData = async (req, res) => {
       notifications.push({
         type: 'warning',
         message: `Driver ${d.name} has a low safety score: ${d.safetyScore}/100`,
-        time: 'Safety Alert'
+        time: 'Safety Alert',
+        path: '/compliance'
       });
     });
 
@@ -242,6 +245,61 @@ exports.getAnalyticsData = async (req, res) => {
         }, {}),
         recentFuelLogs
       }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Get system notifications/alerts
+// @route   GET /api/reports/notifications
+// @access  Private (All Roles)
+exports.getNotifications = async (req, res) => {
+  try {
+    const notifications = [];
+    const now = new Date();
+    const thirtyDaysFromNow = new Date();
+    thirtyDaysFromNow.setDate(now.getDate() + 30);
+
+    // Check expiring licenses
+    const expiringDrivers = await Driver.find({
+      licenseExpiryDate: { $lte: thirtyDaysFromNow }
+    }).limit(3);
+    expiringDrivers.forEach(d => {
+      const days = Math.ceil((new Date(d.licenseExpiryDate) - now) / (1000 * 60 * 60 * 24));
+      notifications.push({
+        type: days < 0 ? 'danger' : 'warning',
+        message: `Driver ${d.name}'s license ${days < 0 ? 'expired' : 'is expiring in ' + days + ' days'} (${new Date(d.licenseExpiryDate).toLocaleDateString()})`,
+        time: 'License Alert',
+        path: '/compliance'
+      });
+    });
+
+    // Check vehicles in shop
+    const shopVehicles = await Vehicle.find({ status: 'In Shop' }).limit(3);
+    shopVehicles.forEach(v => {
+      notifications.push({
+        type: 'info',
+        message: `Vehicle ${v.registrationNumber} (${v.name}) is currently In Shop for maintenance.`,
+        time: 'Maintenance Alert',
+        path: '/maintenance'
+      });
+    });
+
+    // Low Safety Score
+    const lowSafetyDrivers = await Driver.find({ safetyScore: { $lt: 85 } }).limit(2);
+    lowSafetyDrivers.forEach(d => {
+      notifications.push({
+        type: 'warning',
+        message: `Driver ${d.name} has a low safety score: ${d.safetyScore}/100`,
+        time: 'Safety Alert',
+        path: '/compliance'
+      });
+    });
+
+    res.status(200).json({
+      success: true,
+      data: notifications
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

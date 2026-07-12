@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { reports } from '../services/api';
 
 const rolePathAccess = {
   'Fleet Manager': ['/vehicles', '/maintenance', '/settings'],
@@ -15,6 +16,24 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
   const [theme, setTheme] = useState(localStorage.getItem('transitops_theme') || 'light');
   const [mobileSidebarShow, setMobileSidebarShow] = useState(false);
+  const [notificationsList, setNotificationsList] = useState([]);
+  const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await reports.getNotifications();
+        if (res.success) {
+          setNotificationsList(res.data || []);
+        }
+      } catch (err) {
+        console.error('Error fetching notifications in layout:', err);
+      }
+    };
+    if (isAuthenticated) {
+      fetchNotifications();
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -148,7 +167,7 @@ const DashboardLayout = () => {
         </header>
 
         {/* Desktop Header */}
-        <header className="d-none d-lg-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <header className="d-none d-lg-flex justify-content-between align-items-center mb-4 pb-3 border-bottom position-relative">
           <div>
             <h4 className="fw-semibold mb-0">Smart Transport Operations</h4>
             <small className="text-muted">Logged in as {user?.role}</small>
@@ -157,7 +176,74 @@ const DashboardLayout = () => {
             <span className="text-muted fs-7">
               <i className="bi-calendar-check me-1"></i> {new Date().toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
             </span>
-            <button className="btn btn-light rounded-circle" onClick={toggleTheme} title="Toggle Dark/Light Mode">
+            
+            {/* Alerts Dropdown Button */}
+            <div className="position-relative">
+              <button 
+                onClick={() => setShowNotifDropdown(!showNotifDropdown)}
+                className="btn btn-light rounded-circle position-relative"
+                title="View System Alerts"
+                style={{ width: '40px', height: '40px', padding: 0 }}
+              >
+                <i className="bi-bell fs-5"></i>
+                {notificationsList.length > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle p-1.5 bg-danger border border-light rounded-circle" style={{ transform: 'translate(-50%, -20%)' }}>
+                    <span className="visually-hidden">New alerts</span>
+                  </span>
+                )}
+              </button>
+
+              {/* Floating Dropdown Panel */}
+              {showNotifDropdown && (
+                <div 
+                  className="card position-absolute end-0 mt-2 p-3 shadow-lg border-0" 
+                  style={{ 
+                    width: '320px', 
+                    zIndex: 1100, 
+                    borderRadius: '20px', 
+                    backgroundColor: 'var(--card-bg)',
+                    border: '1px solid var(--border-color)'
+                  }}
+                >
+                  <h6 className="fw-bold mb-3 pb-2 border-bottom d-flex align-items-center justify-content-between text-wrap">
+                    <span><i className="bi-bell-fill text-danger me-1"></i> System Alerts</span>
+                    <span className="badge bg-danger rounded-pill fs-9">{notificationsList.length}</span>
+                  </h6>
+                  <div style={{ maxHeight: '280px', overflowY: 'auto' }} className="d-flex flex-column gap-2">
+                    {notificationsList.length > 0 ? (
+                      notificationsList.map((notif, idx) => (
+                        <div 
+                          key={idx} 
+                          className={`p-2.5 rounded-3 bg-${notif.type} bg-opacity-10 border-start border-3 border-${notif.type} d-flex align-items-start gap-2 text-wrap`}
+                          style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
+                          onClick={() => {
+                            if (notif.path) {
+                              navigate(notif.path);
+                              setShowNotifDropdown(false);
+                            }
+                          }}
+                        >
+                          <i className={`bi ${notif.type === 'danger' ? 'bi-exclamation-octagon-fill text-danger' : notif.type === 'warning' ? 'bi-exclamation-triangle-fill text-warning' : 'bi-info-circle-fill text-info'} fs-6 mt-0.5`}></i>
+                          <div>
+                            <div className="fw-semibold" style={{ fontSize: '0.78rem', color: 'var(--text-primary)', lineHeight: '1.3' }}>
+                              {notif.message}
+                            </div>
+                            <span className="text-secondary fs-8 d-block mt-1">{notif.time}</span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4 text-secondary small">
+                        <i className="bi-check-circle-fill text-success fs-3 mb-1.5 d-block"></i>
+                        All systems normal.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button className="btn btn-light rounded-circle" onClick={toggleTheme} title="Toggle Dark/Light Mode" style={{ width: '40px', height: '40px', padding: 0 }}>
               <i className={`bi ${theme === 'light' ? 'bi-moon' : 'bi-sun'} fs-5`}></i>
             </button>
           </div>

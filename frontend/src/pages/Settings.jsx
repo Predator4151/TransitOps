@@ -14,7 +14,7 @@ const Settings = () => {
 
       <div className="row g-4">
         {/* Profile Card */}
-        <div className="col-12 col-lg-6">
+        <div className="col-12">
           <div className="card transitops-card p-4">
             <h5 className="fw-bold mb-4"><i className="bi-person-badge-fill text-primary me-2"></i> User Profile Details</h5>
             <div className="d-flex align-items-center gap-3 mb-4">
@@ -39,31 +39,6 @@ const Settings = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <span className="text-secondary fw-medium">Session Token Status</span>
                 <span className="badge bg-light text-dark border"><i className="bi-key-fill text-warning me-1"></i> JWT Signed (30d)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* System Specs */}
-        <div className="col-12 col-lg-6">
-          <div className="card transitops-card p-4">
-            <h5 className="fw-bold mb-4"><i className="bi-cpu-fill text-warning me-2"></i> Application Status</h5>
-            <div className="d-flex flex-column gap-3">
-              <div className="d-flex justify-content-between align-items-center">
-                <span className="text-secondary fw-medium">Backend Version</span>
-                <span className="text-dark fw-semibold">1.0.0 (Node/Express)</span>
-              </div>
-              <div className="d-flex justify-content-between align-items-center">
-                <span className="text-secondary fw-medium">Frontend Scaffolding</span>
-                <span className="text-dark fw-semibold">React 19.x / Vite / Bootstrap 5</span>
-              </div>
-              <div className="d-flex justify-content-between align-items-center">
-                <span className="text-secondary fw-medium">Database Node</span>
-                <span className="text-dark fw-semibold">MongoDB (Active Localhost)</span>
-              </div>
-              <div className="d-flex justify-content-between align-items-center">
-                <span className="text-secondary fw-medium">Platform Env</span>
-                <span className="badge bg-success-subtle text-success border border-success border-opacity-25 px-2.5 py-1">Demo Sandboxed</span>
               </div>
             </div>
           </div>

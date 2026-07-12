@@ -189,7 +189,7 @@ const Dashboard = () => {
 
       <div className="row g-4">
         {/* Recent Trips Table */}
-        <div className="col-12 col-lg-8">
+        <div className="col-12">
           <div className="card transitops-card p-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
               <h5 className="fw-bold mb-0"><i className="bi-geo-fill text-primary me-2"></i> Recent Trips</h5>
@@ -233,55 +233,6 @@ const Dashboard = () => {
                   )}
                 </tbody>
               </table>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions & Notifications */}
-        <div className="col-12 col-lg-4">
-          {/* Quick Actions */}
-          <div className="card transitops-card p-4 mb-4">
-            <h5 className="fw-bold mb-3"><i className="bi-lightning-fill text-warning me-2"></i> Quick Actions</h5>
-            <div className="d-grid gap-2">
-              <button onClick={() => navigate('/trips')} className="btn btn-outline-primary d-flex align-items-center justify-content-between text-start p-2.5">
-                <span><i className="bi-geo-alt-fill me-2"></i> Plan a New Trip</span>
-                <i className="bi-chevron-right"></i>
-              </button>
-              <button onClick={() => navigate('/maintenance')} className="btn btn-outline-warning d-flex align-items-center justify-content-between text-start p-2.5">
-                <span><i className="bi-tools me-2"></i> Log Vehicle Maintenance</span>
-                <i className="bi-chevron-right"></i>
-              </button>
-              <button onClick={() => navigate('/fuel')} className="btn btn-outline-info d-flex align-items-center justify-content-between text-start p-2.5">
-                <span><i className="bi-fuel-pump-fill me-2"></i> Record Fuel Purchase</span>
-                <i className="bi-chevron-right"></i>
-              </button>
-              <button onClick={() => navigate('/expenses')} className="btn btn-outline-success d-flex align-items-center justify-content-between text-start p-2.5">
-                <span><i className="bi-cash-coin me-2"></i> Log Toll or Insurance</span>
-                <i className="bi-chevron-right"></i>
-              </button>
-            </div>
-          </div>
-
-          {/* Notifications */}
-          <div className="card transitops-card p-4">
-            <h5 className="fw-bold mb-3"><i className="bi-bell-fill text-danger me-2"></i> Alerts &amp; Notifications</h5>
-            <div className="d-flex flex-column gap-3" style={{ maxHeight: '240px', overflowY: 'auto' }}>
-              {notifications.length > 0 ? (
-                notifications.map((notif, idx) => (
-                  <div key={idx} className={`p-3 rounded-3 bg-${notif.type} bg-opacity-10 border-start border-3 border-${notif.type} d-flex align-items-start gap-2`}>
-                    <i className={`bi ${notif.type === 'danger' ? 'bi-exclamation-octagon-fill text-danger' : notif.type === 'warning' ? 'bi-exclamation-triangle-fill text-warning' : 'bi-info-circle-fill text-info'} fs-5 mt-0.5`}></i>
-                    <div>
-                      <div className="small text-dark fw-medium leading-tight">{notif.message}</div>
-                      <span className="text-secondary fs-8 d-block mt-1">{notif.time}</span>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-3 text-muted">
-                  <i className="bi-check-circle-fill text-success fs-3 mb-2 d-block"></i>
-                  All systems operating normally.
-                </div>
-              )}
             </div>
           </div>
         </div>

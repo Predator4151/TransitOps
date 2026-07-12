@@ -12,17 +12,16 @@ const { protect, authorize } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.use(protect);
-router.use(authorize('Safety Officer'));
 
 router
   .route('/')
-  .get(getDrivers)
-  .post(createDriver);
+  .get(authorize('Safety Officer', 'Dispatcher'), getDrivers)
+  .post(authorize('Safety Officer'), createDriver);
 
 router
   .route('/:id')
-  .get(getDriver)
-  .put(updateDriver)
-  .delete(deleteDriver);
+  .get(authorize('Safety Officer', 'Dispatcher'), getDriver)
+  .put(authorize('Safety Officer'), updateDriver)
+  .delete(authorize('Safety Officer'), deleteDriver);
 
 module.exports = router;

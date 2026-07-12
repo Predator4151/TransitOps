@@ -224,5 +224,9 @@ export const reports = {
   getAnalytics: async () => {
     const res = await api.get('/reports/analytics');
     return res.data;
+  },
+  getNotifications: async () => {
+    const res = await api.get('/reports/notifications');
+    return res.data;
   }
 };

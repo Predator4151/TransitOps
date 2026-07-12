@@ -1,11 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import { reports as reportApi } from '../services/api';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
-import { Bar, Doughnut } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale, LinearScale, BarElement,
+  Title, Tooltip, Legend
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
+// ─── Helpers ────────────────────────────────────────────────────────────────
+const fmt = (n) => Number(n || 0).toLocaleString('en-IN');
+
+// Month label: "2025-03" → "Mar"
+const shortMonth = (str) => {
+  if (!str) return '';
+  const [y, m] = str.split('-');
+  return new Date(Number(y), Number(m) - 1).toLocaleString('en-IN', { month: 'short' });
+};
+
+// ─── KPI Card ────────────────────────────────────────────────────────────────
+const KpiCard = ({ label, value, accent }) => (
+  <div
+    className="card border-0 p-3 flex-fill"
+    style={{ borderLeft: `3px solid ${accent}` }}
+  >
+    <div
+      className="text-uppercase fw-semibold mb-2"
+      style={{ fontSize: '0.65rem', letterSpacing: '0.1em', color: accent }}
+    >
+      {label}
+    </div>
+    <div className="fw-bold" style={{ fontSize: '1.6rem', lineHeight: 1.15 }}>
+      {value}
+    </div>
+  </div>
+);
+
+// ─── Horizontal custom bar (no Chart.js) ─────────────────────────────────────
+const HBar = ({ label, value, maxValue, color }) => {
+  const pct = maxValue > 0 ? Math.min((value / maxValue) * 100, 100) : 0;
+  return (
+    <div className="mb-3">
+      <div className="fw-semibold mb-1" style={{ fontSize: '0.8rem', letterSpacing: '0.04em' }}>
+        {label}
+      </div>
+      <div
+        className="rounded-1 overflow-hidden position-relative"
+        style={{ height: '28px', backgroundColor: 'rgba(255,255,255,0.06)' }}
+      >
+        <div
+          className="h-100 rounded-1"
+          style={{
+            width: `${pct}%`,
+            backgroundColor: color,
+            transition: 'width 0.6s ease'
+          }}
+        />
+      </div>
+      <div className="text-secondary mt-1" style={{ fontSize: '0.72rem' }}>
+        ₹{fmt(value)}
+      </div>
+    </div>
+  );
+};
+
+// ─── Main Component ──────────────────────────────────────────────────────────
 const Reports = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -14,9 +74,7 @@ const Reports = () => {
     const fetchAnalytics = async () => {
       try {
         const res = await reportApi.getAnalytics();
-        if (res.success) {
-          setData(res.data);
-        }
+        if (res.success) setData(res.data);
       } catch (err) {
         console.error('Error fetching analytics:', err);
       } finally {
@@ -26,247 +84,192 @@ const Reports = () => {
     fetchAnalytics();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="container-fluid py-2">
-        <div className="card border-0 shadow-sm p-4 mb-4 loading-skeleton" style={{ height: '100px' }}></div>
-        <div className="row g-4">
-          <div className="col-12 col-md-6">
-            <div className="card border-0 shadow-sm p-4 loading-skeleton" style={{ height: '350px' }}></div>
-          </div>
-          <div className="col-12 col-md-6">
-            <div className="card border-0 shadow-sm p-4 loading-skeleton" style={{ height: '350px' }}></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const vehicles = data?.vehicles || [];
-  const expenseBreakdown = data?.expenseBreakdown || {};
-
-  // 1. CSV Export Handler
+  // ── CSV Export ──────────────────────────────────────────────────────────────
   const handleCSVExport = () => {
+    const vehicles = data?.vehicles || [];
     if (vehicles.length === 0) return;
-    
-    // Define headers
-    const headers = [
-      'Registration Number',
-      'Vehicle Name',
-      'Type',
-      'Acquisition Cost ($)',
-      'Total Costs ($)',
-      'Estimated Revenue ($)',
-      'Net Profit ($)',
-      'ROI (%)',
-      'Fuel Efficiency (km/L)'
-    ];
-
-    // Map rows
-    const rows = vehicles.map(v => [
-      v.registrationNumber,
-      v.name,
-      v.type,
-      v.acquisitionCost,
-      v.costs?.total || 0,
-      v.revenue || 0,
-      v.netProfit || 0,
-      v.roi,
-      v.fuelEfficiency
-    ]);
-
-    // Build CSV string
-    const csvContent = 'data:text/csv;charset=utf-8,' 
-      + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-
-    // Create download link
-    const encodedUri = encodeURI(csvContent);
+    const headers = ['Registration', 'Name', 'Type', 'Acq. Cost (₹)', 'Total Costs (₹)', 'Revenue (₹)', 'Net Profit (₹)', 'ROI (%)', 'Fuel Efficiency (km/L)'];
+    const rows = vehicles.map(v => [v.registrationNumber, v.name, v.type, v.acquisitionCost, v.costs?.total || 0, v.revenue || 0, v.netProfit || 0, v.roi, v.fuelEfficiency]);
+    const csv = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `transitops_fleet_report_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('href', encodeURI(csv));
+    link.setAttribute('download', `transitops_report_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  // 2. PDF Export Handler (Window Print styled or alert)
-  const handlePDFExport = () => {
-    // Standard professional print trigger
-    window.print();
+  if (loading) {
+    return (
+      <div className="container-fluid px-0 py-4 text-center">
+        <div className="spinner-border text-primary" role="status" />
+        <p className="text-muted mt-2">Building analytics...</p>
+      </div>
+    );
+  }
+
+  const vehicles    = data?.vehicles      || [];
+  const kpis        = data?.kpis          || {};
+  const monthlyRev  = data?.monthlyRevenue || [];
+
+  // ── Monthly Revenue Chart ───────────────────────────────────────────────────
+  const revLabels   = monthlyRev.map(m => shortMonth(m._id));
+  const revValues   = monthlyRev.map(m => m.revenue);
+  const maxRev      = Math.max(...revValues, 1);
+
+  const revenueChartData = {
+    labels: revLabels.length > 0 ? revLabels : ['No data'],
+    datasets: [{
+      label: 'Monthly Revenue (₹)',
+      data: revValues.length > 0 ? revValues : [0],
+      backgroundColor: 'rgba(100,160,240,0.85)',
+      borderRadius: 4,
+      barThickness: 32
+    }]
   };
 
-  // --- Charts Config ---
-
-  // ROI Chart Config
-  const roiData = {
-    labels: vehicles.map(v => v.registrationNumber),
-    datasets: [
-      {
-        label: 'ROI (%)',
-        data: vehicles.map(v => v.roi),
-        backgroundColor: vehicles.map(v => v.roi >= 0 ? 'rgba(16, 185, 129, 0.85)' : 'rgba(239, 68, 68, 0.85)'),
-        borderRadius: 12
-      }
-    ]
-  };
-
-  const roiOptions = {
+  const revenueChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { display: false }
-    },
-    scales: {
-      y: {
-        title: { display: true, text: 'Return on Investment (%)' },
-        grid: { color: 'rgba(0,0,0,0.03)' }
-      },
-      x: { grid: { display: false } }
-    }
-  };
-
-  // Fuel Efficiency Chart Config
-  const fuelData = {
-    labels: vehicles.map(v => v.registrationNumber),
-    datasets: [
-      {
-        label: 'Fuel Efficiency (km/L)',
-        data: vehicles.map(v => v.fuelEfficiency),
-        backgroundColor: 'rgba(99, 102, 241, 0.85)',
-        borderRadius: 12
-      }
-    ]
-  };
-
-  const fuelOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false }
-    },
-    scales: {
-      y: {
-        title: { display: true, text: 'Efficiency (km/L)' },
-        grid: { color: 'rgba(0,0,0,0.03)' }
-      },
-      x: { grid: { display: false } }
-    }
-  };
-
-  // Expense Breakdown doughnut chart
-  const expenseKeys = Object.keys(expenseBreakdown);
-  const expenseData = {
-    labels: expenseKeys,
-    datasets: [
-      {
-        data: Object.values(expenseBreakdown),
-        backgroundColor: ['#6366F1', '#F59E0B', '#0EA5E9', '#EF4444', '#10B981', '#64748B'],
-        borderWidth: 1
-      }
-    ]
-  };
-
-  const expenseOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'right',
-        labels: {
-          boxWidth: 12,
-          usePointStyle: true
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `₹${fmt(ctx.parsed.y)}`
         }
       }
+    },
+    scales: {
+      y: {
+        display: false,
+        grid: { display: false }
+      },
+      x: {
+        grid: { display: false },
+        ticks: { color: '#aaa', font: { size: 11 } }
+      }
     }
   };
 
+  // ── Top Costliest Vehicles ─────────────────────────────────────────────────
+  const topCostly = [...vehicles]
+    .sort((a, b) => (b.costs?.total || 0) - (a.costs?.total || 0))
+    .slice(0, 5);
+  const maxCost   = Math.max(...topCostly.map(v => v.costs?.total || 0), 1);
+  const barColors = ['#f97066', '#e8820c', '#5fa8d3', '#a78bfa', '#34d399'];
+
   return (
-    <div className="container-fluid px-0 print-container">
-      {/* Page Header (Hidden on print) */}
-      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4 d-print-none">
+    <div className="container-fluid px-0">
+      {/* Page Header */}
+      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
         <div>
           <h2 className="fw-bold mb-1">Reports &amp; Analytics</h2>
-          <p className="text-secondary mb-0">Export financial logs, audit efficiency, and check vehicle ROI</p>
+          <p className="text-secondary mb-0">Audit efficiency, track revenue, and analyse fleet ROI</p>
         </div>
         <div className="d-flex gap-2">
           <button onClick={handleCSVExport} className="btn btn-outline-primary d-flex align-items-center gap-2">
             <i className="bi-file-earmark-spreadsheet"></i> Export CSV
           </button>
-          <button onClick={handlePDFExport} className="btn btn-primary d-flex align-items-center gap-2">
-            <i className="bi-printer"></i> Print Report / PDF
+          <button onClick={() => window.print()} className="btn btn-primary d-flex align-items-center gap-2">
+            <i className="bi-printer"></i> Print / PDF
           </button>
         </div>
       </div>
 
-      {/* Print Title (Visible only on print) */}
-      <div className="d-none d-print-block mb-4 text-center">
-        <h2 className="fw-bold">TransitOps - Smart Transport Operations</h2>
-        <h4>Fleet Performance and Financial Audit Report</h4>
-        <small className="text-muted">Generated on {new Date().toLocaleString()}</small>
-        <hr />
+      {/* ── KPI Cards Row ─────────────────────────────────────────────────── */}
+      <div className="d-flex flex-wrap gap-3 mb-2">
+        <KpiCard
+          label="Fuel Efficiency"
+          value={`${kpis.avgFuelEfficiency ?? 0} km/l`}
+          accent="#28a745"
+        />
+        <KpiCard
+          label="Fleet Utilization"
+          value={`${kpis.fleetUtilization ?? 0}%`}
+          accent="#28a745"
+        />
+        <KpiCard
+          label="Operational Cost"
+          value={fmt(kpis.totalOperationalCost)}
+          accent="#e8820c"
+        />
+        <KpiCard
+          label="Vehicle ROI"
+          value={`${kpis.overallRoi ?? 0}%`}
+          accent="#28a745"
+        />
       </div>
 
-      {/* Analytics Summary Row */}
+      {/* ROI Formula Note */}
+      <p className="text-secondary mb-4" style={{ fontSize: '0.75rem', fontStyle: 'italic' }}>
+        ROI = (Revenue − (Maintenance + Fuel)) / Acquisition Cost
+      </p>
+
+      {/* ── Charts Row ───────────────────────────────────────────────────── */}
       <div className="row g-4 mb-4">
-        {/* Cost Breakdown Doughnut */}
-        <div className="col-12 col-md-5">
-          <div className="card transitops-card p-4 h-100">
-            <h5 className="fw-bold mb-3"><i className="bi-pie-chart-fill text-primary me-2"></i> Global Expenses</h5>
-            <div style={{ height: '260px', position: 'relative' }}>
-              {expenseKeys.length > 0 ? (
-                <Doughnut data={expenseData} options={expenseOptions} />
-              ) : (
-                <div className="d-flex h-100 align-items-center justify-content-center text-muted">
-                  No expense records logged.
-                </div>
-              )}
-            </div>
+        {/* Monthly Revenue Bar Chart */}
+        <div className="col-12 col-lg-6">
+          <div className="card border-0 p-4 h-100">
+            <h6
+              className="fw-bold mb-4 text-uppercase"
+              style={{ letterSpacing: '0.08em', fontSize: '0.75rem' }}
+            >
+              Monthly Revenue
+            </h6>
+            {revValues.length > 0 ? (
+              <div style={{ height: '220px' }}>
+                <Bar data={revenueChartData} options={revenueChartOptions} />
+              </div>
+            ) : (
+              <div className="d-flex h-100 align-items-center justify-content-center text-muted py-5">
+                No completed trips yet.
+              </div>
+            )}
           </div>
         </div>
 
-        {/* ROI Bar chart */}
-        <div className="col-12 col-md-7">
-          <div className="card transitops-card p-4 h-100">
-            <h5 className="fw-bold mb-3"><i className="bi-percent text-success me-2"></i> Vehicle ROI %</h5>
-            <div style={{ height: '260px', position: 'relative' }}>
-              {vehicles.length > 0 ? (
-                <Bar data={roiData} options={roiOptions} />
-              ) : (
-                <div className="d-flex h-100 align-items-center justify-content-center text-muted">
-                  Insufficient data for ROI metrics.
-                </div>
-              )}
-            </div>
-            <div className="text-secondary fs-8 mt-2 d-print-none">
-              * ROI formula: Net Profit (Estimated Revenue - Operational Costs) / Acquisition Cost. Estimated Revenue is computed as distance completed * $3.50.
-            </div>
+        {/* Top Costliest Vehicles Horizontal Bars */}
+        <div className="col-12 col-lg-6">
+          <div className="card border-0 p-4 h-100">
+            <h6
+              className="fw-bold mb-4 text-uppercase"
+              style={{ letterSpacing: '0.08em', fontSize: '0.75rem' }}
+            >
+              Top Costliest Vehicles
+            </h6>
+            {topCostly.length > 0 ? (
+              topCostly.map((v, i) => (
+                <HBar
+                  key={v.id}
+                  label={v.registrationNumber}
+                  value={v.costs?.total || 0}
+                  maxValue={maxCost}
+                  color={barColors[i % barColors.length]}
+                />
+              ))
+            ) : (
+              <div className="d-flex h-100 align-items-center justify-content-center text-muted py-5">
+                No expense data available.
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Fuel Efficiency Bar Chart */}
-      <div className="card transitops-card p-4 mb-4">
-        <h5 className="fw-bold mb-3"><i className="bi-fuel-pump-fill text-info me-2"></i> Average Fuel Efficiency per Vehicle (km/L)</h5>
-        <div style={{ height: '260px', position: 'relative' }}>
-          {vehicles.length > 0 ? (
-            <Bar data={fuelData} options={fuelOptions} />
-          ) : (
-            <div className="d-flex h-100 align-items-center justify-content-center text-muted">
-              Refuel log data needed to compute efficiency.
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Detailed Fleet Analytics Table */}
-      <div className="card transitops-card p-4">
-        <h5 className="fw-bold mb-3"><i className="bi-table text-primary me-2"></i> Fleet Financials Overview</h5>
+      {/* ── Detailed Fleet Financials Table ──────────────────────────────── */}
+      <div className="card border-0 p-4">
+        <h6
+          className="fw-bold mb-4 text-uppercase"
+          style={{ letterSpacing: '0.08em', fontSize: '0.75rem' }}
+        >
+          <i className="bi-table me-2 text-primary"></i>Fleet Financials Overview
+        </h6>
         <div className="table-responsive">
           <table className="table transitops-table text-nowrap w-100">
             <thead>
               <tr>
                 <th>Registration</th>
-                <th>Vehicle Model</th>
+                <th>Vehicle</th>
                 <th>Acq. Cost</th>
                 <th>Operational Cost</th>
                 <th>Est. Revenue</th>
@@ -276,26 +279,32 @@ const Reports = () => {
               </tr>
             </thead>
             <tbody>
-              {vehicles.map((v) => (
+              {vehicles.length > 0 ? vehicles.map((v) => (
                 <tr key={v.id}>
-                  <td className="fw-bold text-dark">{v.registrationNumber}</td>
-                  <td>{v.name} ({v.type})</td>
-                  <td>${v.acquisitionCost.toLocaleString()}</td>
-                  <td>${v.costs?.total?.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                  <td>${v.revenue?.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td className="fw-bold">{v.registrationNumber}</td>
+                  <td>{v.name} <span className="text-secondary fs-8">({v.type})</span></td>
+                  <td>₹{fmt(v.acquisitionCost)}</td>
+                  <td>₹{fmt(v.costs?.total)}</td>
+                  <td>₹{fmt(v.revenue)}</td>
                   <td className={`fw-semibold ${v.netProfit >= 0 ? 'text-success' : 'text-danger'}`}>
-                    {v.netProfit >= 0 ? '+' : ''}${v.netProfit?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    {v.netProfit >= 0 ? '+' : ''}₹{fmt(v.netProfit)}
                   </td>
                   <td>
-                    <span className={`badge bg-${v.roi >= 0 ? 'success' : 'danger'} rounded-pill px-2 py-1`}>
+                    <span className={`badge rounded-pill px-2 py-1 bg-${v.roi >= 0 ? 'success' : 'danger'}`}>
                       {v.roi}%
                     </span>
                   </td>
-                  <td>
-                    <strong className="text-secondary">{v.fuelEfficiency ? `${v.fuelEfficiency} km/L` : 'N/A'}</strong>
+                  <td className="text-secondary fw-semibold">
+                    {v.fuelEfficiency ? `${v.fuelEfficiency} km/L` : 'N/A'}
                   </td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan="8" className="text-center text-muted py-4">
+                    No vehicle analytics data available.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

@@ -9,13 +9,13 @@ const MaintenanceSchema = new mongoose.Schema({
   maintenanceType: {
     type: String,
     required: [true, 'Please specify maintenance type'],
-    enum: ['Routine Oil Change', 'Tire Rotation', 'Brake Repair', 'Engine Tune-up', 'Transmission Service', 'General Maintenance', 'Inspection'],
-    default: 'General Maintenance'
+    enum: ['Oil Change', 'Engine Repair', 'Tyre Replace', 'Brake Repair', 'General Maintenance', 'Engine Tune-up', 'Transmission Service', 'Inspection'],
+    default: 'Oil Change'
   },
   description: {
     type: String,
-    required: [true, 'Please provide description of maintenance'],
-    trim: true
+    trim: true,
+    default: ''
   },
   date: {
     type: Date,

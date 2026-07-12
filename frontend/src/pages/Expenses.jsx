@@ -296,7 +296,7 @@ const Expenses = () => {
                               {exp.expenseType}
                             </span>
                           </td>
-                          <td className="fw-bold text-dark">${exp.cost.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                          <td className="fw-bold text-dark">₹{exp.cost.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                           <td>
                             <div className="text-truncate" style={{ maxWidth: '300px' }} title={exp.description}>
                               {exp.description}
@@ -401,10 +401,10 @@ const Expenses = () => {
                             {item.vehicle?.status}
                           </span>
                         </td>
-                        <td>${fuel.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                        <td>${maintenance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                        <td>${others.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                        <td className="fw-bold fs-7 text-primary">${item.totalCost.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                        <td>₹{fuel.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                        <td>₹{maintenance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                        <td>₹{others.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                        <td className="fw-bold fs-7 text-primary">₹{item.totalCost.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                       </tr>
                     );
                   })}
@@ -484,7 +484,7 @@ const Expenses = () => {
                         type="number" 
                         step="0.01"
                         className={`form-control ${errors.cost ? 'is-invalid' : ''}`}
-                        placeholder="e.g. 15.00"
+                        placeholder="e.g. 1500"
                         {...register('cost', { 
                           required: 'Cost is required',
                           min: { value: 0.01, message: 'Must be greater than 0' }

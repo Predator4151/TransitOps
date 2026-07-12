@@ -217,7 +217,7 @@ const FuelLogs = () => {
                         <span className="text-secondary fs-8">{log.vehicle?.name}</span>
                       </td>
                       <td>{log.fuelQuantity} L</td>
-                      <td>${log.fuelCost.toLocaleString()}</td>
+                      <td>₹{log.fuelCost.toLocaleString('en-IN')}</td>
                       <td>{log.distanceCovered} km</td>
                       <td>
                         <span className="badge bg-success bg-opacity-10 text-success fw-bold p-2 fs-8 rounded">
@@ -352,7 +352,7 @@ const FuelLogs = () => {
                         type="number" 
                         step="0.01"
                         className={`form-control ${errors.fuelCost ? 'is-invalid' : ''}`}
-                        placeholder="e.g. 94.25"
+                        placeholder="e.g. 9425"
                         {...register('fuelCost', { 
                           required: 'Total cost is required',
                           min: { value: 0, message: 'Cannot be negative' }

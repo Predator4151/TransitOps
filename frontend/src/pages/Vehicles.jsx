@@ -250,7 +250,7 @@ const Vehicles = () => {
                       <td>{v.type}</td>
                       <td>{v.maxLoadCapacity.toLocaleString()} kg</td>
                       <td>{v.currentOdometer.toLocaleString()} km</td>
-                      <td>${v.acquisitionCost.toLocaleString()}</td>
+                      <td>₹{v.acquisitionCost.toLocaleString('en-IN')}</td>
                       <td>
                         <span className={`badge-status ${v.status.toLowerCase().replace(/\s+/g, '')}`}>
                           {v.status}
@@ -339,7 +339,7 @@ const Vehicles = () => {
                       <input 
                         type="text" 
                         className={`form-control ${errors.registrationNumber ? 'is-invalid' : ''}`}
-                        placeholder="e.g. TO-101"
+                        placeholder="e.g. GJ-01-AB-1234"
                         {...register('registrationNumber', { 
                           required: 'Registration number is required',
                           pattern: { value: /^[A-Z0-9-]+$/i, message: 'Alphanumeric characters only' }
@@ -354,7 +354,7 @@ const Vehicles = () => {
                       <input 
                         type="text" 
                         className={`form-control ${errors.name ? 'is-invalid' : ''}`}
-                        placeholder="e.g. Ford Transit"
+                        placeholder="e.g. Tata Ultra"
                         {...register('name', { required: 'Vehicle name is required' })}
                       />
                       {errors.name && <div className="text-danger small mt-0.5">{errors.name.message}</div>}
@@ -366,7 +366,7 @@ const Vehicles = () => {
                       <input 
                         type="text" 
                         className={`form-control ${errors.model ? 'is-invalid' : ''}`}
-                        placeholder="e.g. Transit 350"
+                        placeholder="e.g. 1918 T"
                         {...register('model', { required: 'Model is required' })}
                       />
                       {errors.model && <div className="text-danger small mt-0.5">{errors.model.message}</div>}
@@ -390,7 +390,7 @@ const Vehicles = () => {
                       <input 
                         type="number" 
                         className={`form-control ${errors.maxLoadCapacity ? 'is-invalid' : ''}`}
-                        placeholder="e.g. 1500"
+                        placeholder="e.g. 45000"
                         {...register('maxLoadCapacity', { 
                           required: 'Load capacity is required',
                           min: { value: 1, message: 'Must be greater than 0' }
@@ -405,7 +405,7 @@ const Vehicles = () => {
                       <input 
                         type="number" 
                         className={`form-control ${errors.currentOdometer ? 'is-invalid' : ''}`}
-                        placeholder="e.g. 12000"
+                        placeholder="e.g. 8,50,000"
                         {...register('currentOdometer', { 
                           required: 'Odometer is required',
                           min: { value: 0, message: 'Cannot be negative' }
@@ -416,11 +416,11 @@ const Vehicles = () => {
 
                     {/* Acquisition Cost */}
                     <div className="col-12 col-sm-6">
-                      <label className="form-label text-secondary small fw-medium">Acquisition Cost ($)</label>
+                      <label className="form-label text-secondary small fw-medium">Acquisition Cost (₹)</label>
                       <input 
                         type="number" 
                         className={`form-control ${errors.acquisitionCost ? 'is-invalid' : ''}`}
-                        placeholder="e.g. 45000"
+                        placeholder="e.g. 8,50,000"
                         {...register('acquisitionCost', { 
                           required: 'Acquisition cost is required',
                           min: { value: 0, message: 'Cannot be negative' }

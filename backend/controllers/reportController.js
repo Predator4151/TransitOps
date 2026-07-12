@@ -235,6 +235,36 @@ exports.getAnalyticsData = async (req, res) => {
       .sort({ date: -1 })
       .limit(10);
 
+    // 4. Monthly Revenue (from completed trips, grouped by month)
+    const monthlyRevenue = await Trip.aggregate([
+      { $match: { status: 'Completed' } },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m', date: '$updatedAt' } },
+          revenue: { $sum: { $multiply: [{ $ifNull: ['$actualDistance', '$plannedDistance'] }, 35] } }
+        }
+      },
+      { $sort: { _id: 1 } },
+      { $limit: 8 }
+    ]);
+
+    // 5. Fleet-wide averages for KPI cards
+    const allFuelLogs = await FuelLog.find();
+    const totalFuelQty = allFuelLogs.reduce((s, l) => s + l.fuelQuantity, 0);
+    const totalFuelDist = allFuelLogs.reduce((s, l) => s + l.distanceCovered, 0);
+    const avgFuelEfficiency = totalFuelQty > 0 ? parseFloat((totalFuelDist / totalFuelQty).toFixed(1)) : 0;
+
+    const nonRetiredVehicles = await Vehicle.countDocuments({ status: { $ne: 'Retired' } });
+    const onTripVehicles = await Vehicle.countDocuments({ status: 'On Trip' });
+    const fleetUtilization = nonRetiredVehicles > 0 ? parseFloat(((onTripVehicles / nonRetiredVehicles) * 100).toFixed(1)) : 0;
+
+    const totalOperationalCost = vehicleAnalytics.reduce((s, v) => s + v.costs.total, 0);
+    const totalRevenue = vehicleAnalytics.reduce((s, v) => s + v.revenue, 0);
+    const totalAcqCost = vehicleAnalytics.reduce((s, v) => s + v.acquisitionCost, 0);
+    const overallRoi = totalAcqCost > 0
+      ? parseFloat((((totalRevenue - totalOperationalCost) / totalAcqCost) * 100).toFixed(1))
+      : 0;
+
     res.status(200).json({
       success: true,
       data: {
@@ -243,7 +273,14 @@ exports.getAnalyticsData = async (req, res) => {
           acc[curr._id] = curr.total;
           return acc;
         }, {}),
-        recentFuelLogs
+        recentFuelLogs,
+        monthlyRevenue,
+        kpis: {
+          avgFuelEfficiency,
+          fleetUtilization,
+          totalOperationalCost: parseFloat(totalOperationalCost.toFixed(0)),
+          overallRoi
+        }
       }
     });
   } catch (error) {

@@ -128,7 +128,7 @@ const Dashboard = () => {
     { title: 'Pending Trips', value: kpis.pendingTrips, type: 'secondary', icon: 'bi-clock-history', detail: 'Draft trips in backlog' },
     { title: 'In Maintenance', value: kpis.inShopVehicles, type: 'danger', icon: 'bi-tools', detail: 'Vehicles In Shop currently' },
     { title: 'Total Fuel Usage', value: `${kpis.totalFuelLiters} L`, type: 'primary', icon: 'bi-fuel-pump', detail: 'Total logs fuel consumption' },
-    { title: 'Operational Cost', value: `$${kpis.totalOperationalCost.toLocaleString()}`, type: 'success', icon: 'bi-cash-coin', detail: 'Fuel & Maintenance expenses' }
+    { title: 'Operational Cost', value: `₹${kpis.totalOperationalCost.toLocaleString('en-IN')}`, type: 'success', icon: 'bi-cash-coin', detail: 'Fuel & Maintenance expenses' }
   ];
 
   return (

@@ -19,12 +19,12 @@ router.get('/operational-costs', getOperationalCosts);
 router
   .route('/')
   .get(getExpenses)
-  .post(authorize('Fleet Manager', 'Financial Analyst'), createExpense);
+  .post(authorize('Financial Analyst'), createExpense);
 
 router
   .route('/:id')
   .get(getExpense)
-  .put(authorize('Fleet Manager', 'Financial Analyst'), updateExpense)
-  .delete(authorize('Fleet Manager'), deleteExpense);
+  .put(authorize('Financial Analyst'), updateExpense)
+  .delete(authorize('Financial Analyst'), deleteExpense);
 
 module.exports = router;

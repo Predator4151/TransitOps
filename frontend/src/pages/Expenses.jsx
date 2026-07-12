@@ -30,8 +30,8 @@ const Expenses = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [expenseToDelete, setExpenseToDelete] = useState(null);
 
-  const canEdit = hasRole(['Fleet Manager', 'Financial Analyst']);
-  const canDelete = hasRole('Fleet Manager');
+  const canEdit = hasRole('Financial Analyst');
+  const canDelete = hasRole('Financial Analyst');
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 

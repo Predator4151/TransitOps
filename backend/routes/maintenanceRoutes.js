@@ -16,12 +16,12 @@ router.use(protect);
 router
   .route('/')
   .get(getMaintenanceLogs)
-  .post(authorize('Fleet Manager', 'Dispatcher'), createMaintenanceLog);
+  .post(authorize('Fleet Manager'), createMaintenanceLog);
 
 router
   .route('/:id')
   .get(getMaintenanceLog)
-  .put(authorize('Fleet Manager', 'Dispatcher'), updateMaintenanceLog)
+  .put(authorize('Fleet Manager'), updateMaintenanceLog)
   .delete(authorize('Fleet Manager'), deleteMaintenanceLog);
 
 module.exports = router;

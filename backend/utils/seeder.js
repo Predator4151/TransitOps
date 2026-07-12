@@ -28,12 +28,11 @@ const seedDatabase = async () => {
     await Expense.deleteMany();
 
     // 2. Create Users
-    const hashedPassword = await bcrypt.hash('Admin@123', 10);
     const users = await User.create([
-      { name: 'System Admin', email: 'admin@transitops.com', password: hashedPassword, role: 'Fleet Manager' },
-      { name: 'John Dispatcher', email: 'dispatcher@transitops.com', password: hashedPassword, role: 'Dispatcher' },
-      { name: 'Sarah Safety', email: 'safety@transitops.com', password: hashedPassword, role: 'Safety Officer' },
-      { name: 'Frank Financial', email: 'analyst@transitops.com', password: hashedPassword, role: 'Financial Analyst' }
+      { name: 'System Admin', email: 'admin@transitops.com', password: 'Admin@123', role: 'Fleet Manager' },
+      { name: 'John Dispatcher', email: 'dispatcher@transitops.com', password: 'Admin@123', role: 'Dispatcher' },
+      { name: 'Sarah Safety', email: 'safety@transitops.com', password: 'Admin@123', role: 'Safety Officer' },
+      { name: 'Frank Financial', email: 'analyst@transitops.com', password: 'Admin@123', role: 'Financial Analyst' }
     ]);
 
     // 3. Create 12 Vehicles

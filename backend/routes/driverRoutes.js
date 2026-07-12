@@ -16,12 +16,12 @@ router.use(protect);
 router
   .route('/')
   .get(getDrivers)
-  .post(authorize('Fleet Manager', 'Dispatcher', 'Safety Officer'), createDriver);
+  .post(authorize('Safety Officer'), createDriver);
 
 router
   .route('/:id')
   .get(getDriver)
-  .put(authorize('Fleet Manager', 'Dispatcher', 'Safety Officer'), updateDriver)
-  .delete(authorize('Fleet Manager'), deleteDriver);
+  .put(authorize('Safety Officer'), updateDriver)
+  .delete(authorize('Safety Officer'), deleteDriver);
 
 module.exports = router;

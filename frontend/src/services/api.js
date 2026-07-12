@@ -64,6 +64,10 @@ export const auth = {
     const res = await api.get('/auth/me');
     return res.data;
   },
+  resetPassword: async (email, name, newPassword) => {
+    const res = await api.post('/auth/reset-password', { email, name, newPassword });
+    return res.data;
+  },
   getCurrentUser: () => {
     const userStr = localStorage.getItem('transitops_user');
     return userStr ? JSON.parse(userStr) : null;

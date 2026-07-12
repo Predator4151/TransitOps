@@ -16,12 +16,12 @@ router.use(protect);
 router
   .route('/')
   .get(getFuelLogs)
-  .post(authorize('Fleet Manager', 'Dispatcher'), createFuelLog);
+  .post(authorize('Financial Analyst'), createFuelLog);
 
 router
   .route('/:id')
   .get(getFuelLog)
-  .put(authorize('Fleet Manager', 'Dispatcher'), updateFuelLog)
-  .delete(authorize('Fleet Manager'), deleteFuelLog);
+  .put(authorize('Financial Analyst'), updateFuelLog)
+  .delete(authorize('Financial Analyst'), deleteFuelLog);
 
 module.exports = router;

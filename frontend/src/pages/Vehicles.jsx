@@ -27,7 +27,7 @@ const Vehicles = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [vehicleToDelete, setVehicleToDelete] = useState(null);
 
-  const canEdit = hasRole(['Fleet Manager', 'Dispatcher']);
+  const canEdit = hasRole('Fleet Manager');
   const canDelete = hasRole('Fleet Manager');
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();

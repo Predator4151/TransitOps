@@ -16,12 +16,12 @@ router.use(protect);
 router
   .route('/')
   .get(getTrips)
-  .post(authorize('Dispatcher', 'Fleet Manager'), createTrip);
+  .post(authorize('Dispatcher'), createTrip);
 
 router
   .route('/:id')
   .get(getTrip)
-  .put(authorize('Dispatcher', 'Fleet Manager'), updateTrip)
-  .delete(authorize('Fleet Manager'), deleteTrip);
+  .put(authorize('Dispatcher'), updateTrip)
+  .delete(authorize('Dispatcher'), deleteTrip);
 
 module.exports = router;

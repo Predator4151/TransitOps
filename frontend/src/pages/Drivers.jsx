@@ -26,8 +26,8 @@ const Drivers = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [driverToDelete, setDriverToDelete] = useState(null);
 
-  const canEdit = hasRole(['Fleet Manager', 'Dispatcher', 'Safety Officer']);
-  const canDelete = hasRole('Fleet Manager');
+  const canEdit = hasRole('Safety Officer');
+  const canDelete = hasRole('Safety Officer');
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
 

@@ -24,8 +24,8 @@ const FuelLogs = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [logToDelete, setLogToDelete] = useState(null);
 
-  const canEdit = hasRole(['Fleet Manager', 'Dispatcher']);
-  const canDelete = hasRole('Fleet Manager');
+  const canEdit = hasRole('Financial Analyst');
+  const canDelete = hasRole('Financial Analyst');
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 

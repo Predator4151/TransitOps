@@ -29,7 +29,7 @@ const Trips = () => {
   const [completeErrorMessage, setCompleteErrorMessage] = useState('');
   const [completing, setCompleting] = useState(false);
 
-  const canEdit = hasRole(['Fleet Manager', 'Dispatcher']);
+  const canEdit = hasRole('Dispatcher');
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm();
   

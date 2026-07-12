@@ -63,7 +63,7 @@ const Dashboard = () => {
     datasets: [
       {
         data: Object.values(charts.vehicleStatusCounts || {}),
-        backgroundColor: ['#198754', '#0D6EFD', '#FFC107', '#6C757D'],
+        backgroundColor: ['#10B981', '#6366F1', '#F59E0B', '#64748B'],
         borderWidth: 1,
       },
     ],
@@ -91,8 +91,8 @@ const Dashboard = () => {
       {
         label: 'Fuel Expense ($)',
         data: monthlyFuelExpenses.map(item => item.total),
-        backgroundColor: 'rgba(13, 110, 253, 0.85)',
-        borderRadius: 6
+        backgroundColor: 'rgba(99, 102, 241, 0.85)',
+        borderRadius: 12
       }
     ]
   };

@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+const rolePathAccess = {
+  'Fleet Manager': ['/vehicles', '/maintenance', '/settings'],
+  'Dispatcher': ['/', '/trips', '/settings'],
+  'Safety Officer': ['/drivers', '/settings'],
+  'Financial Analyst': ['/fuel', '/expenses', '/reports', '/settings']
+};
+
 const DashboardLayout = () => {
   const { user, logout, isAuthenticated, loading } = useAuth();
   const location = useLocation();
@@ -19,6 +26,21 @@ const DashboardLayout = () => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('transitops_theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    if (!loading && isAuthenticated && user) {
+      const allowedPaths = rolePathAccess[user.role] || [];
+      const currentPath = location.pathname;
+      
+      const isAllowed = allowedPaths.some(path => 
+        path === '/' ? currentPath === '/' : currentPath.startsWith(path)
+      );
+      
+      if (!isAllowed && allowedPaths.length > 0) {
+        navigate(allowedPaths[0]);
+      }
+    }
+  }, [location.pathname, user, isAuthenticated, loading, navigate]);
 
   if (loading) {
     return (
@@ -68,22 +90,24 @@ const DashboardLayout = () => {
         </div>
         
         <ul className="sidebar-menu">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.path || 
-              (item.path !== '/' && location.pathname.startsWith(item.path));
-            return (
-              <li 
-                key={item.name} 
-                className={`sidebar-item ${isActive ? 'active' : ''}`}
-                onClick={() => setMobileSidebarShow(false)}
-              >
-                <Link to={item.path}>
-                  <i className={`bi ${item.icon}`}></i>
-                  <span>{item.name}</span>
-                </Link>
-              </li>
-            );
-          })}
+          {navItems
+            .filter(item => (rolePathAccess[user?.role] || []).includes(item.path))
+            .map((item) => {
+              const isActive = location.pathname === item.path || 
+                (item.path !== '/' && location.pathname.startsWith(item.path));
+              return (
+                <li 
+                  key={item.name} 
+                  className={`sidebar-item ${isActive ? 'active' : ''}`}
+                  onClick={() => setMobileSidebarShow(false)}
+                >
+                  <Link to={item.path}>
+                    <i className={`bi ${item.icon}`}></i>
+                    <span>{item.name}</span>
+                  </Link>
+                </li>
+              );
+            })}
         </ul>
 
         {/* User Card at bottom of sidebar */}

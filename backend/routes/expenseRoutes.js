@@ -13,18 +13,19 @@ const { protect, authorize } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.use(protect);
+router.use(authorize('Financial Analyst'));
 
 router.get('/operational-costs', getOperationalCosts);
 
 router
   .route('/')
   .get(getExpenses)
-  .post(authorize('Financial Analyst'), createExpense);
+  .post(createExpense);
 
 router
   .route('/:id')
   .get(getExpense)
-  .put(authorize('Financial Analyst'), updateExpense)
-  .delete(authorize('Financial Analyst'), deleteExpense);
+  .put(updateExpense)
+  .delete(deleteExpense);
 
 module.exports = router;

@@ -75,14 +75,14 @@ transitops/
 
 Log in to test role-based constraints. All accounts share the same password: **`Admin@123`**
 
-| Role | Username / Email | Write Access Capabilities (Add/Update) | Read Access Capabilities |
+| Role | Username / Email | Authorized Modules (Full Access) | Unauthorized Modules (Completely Hidden & Blocked) |
 | :--- | :--- | :--- | :--- |
-| **Fleet Manager** | `admin@transitops.com` | 🚛 Fleet (Vehicles), 🔧 Maintenance | Read-only for all other pages |
-| **Dispatcher** | `dispatcher@transitops.com` | 📊 Dashboard, 🗺️ Trips | Read-only for all other pages |
-| **Safety Officer** | `safety@transitops.com` | 🪪 Drivers, 🛡️ Compliance | Read-only for all other pages |
-| **Financial Analyst** | `analyst@transitops.com` | ⛽ Fuel & Expenses, 📈 Analytics | Read-only for all other pages |
+| **Fleet Manager** | `admin@transitops.com` | 🚛 Fleet (Vehicles), 🔧 Maintenance | Dashboard, Trips, Drivers, Fuel, Expenses, Reports |
+| **Dispatcher** | `dispatcher@transitops.com` | 📊 Dashboard, 🗺️ Trips | Vehicles, Drivers, Maintenance, Fuel, Expenses, Reports |
+| **Safety Officer** | `safety@transitops.com` | 🪪 Drivers | Dashboard, Vehicles, Trips, Maintenance, Fuel, Expenses, Reports |
+| **Financial Analyst** | `analyst@transitops.com` | ⛽ Fuel Logs, 💵 Expenses, 📈 Analytics (Reports) | Dashboard, Vehicles, Drivers, Trips, Maintenance |
 
-*Note: Access to add/update buttons and modals is conditionally shown/hidden based on the logged-in user's role on the frontend, and secured via Express middleware on the backend.*
+*Note: Access to unauthorized modules is completely hidden in the sidebar and blocked on both frontend routes (immediate redirects) and backend REST API endpoints.*
 
 ---
 

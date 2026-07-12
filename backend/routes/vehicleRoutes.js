@@ -12,16 +12,17 @@ const { protect, authorize } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.use(protect);
+router.use(authorize('Fleet Manager'));
 
 router
   .route('/')
   .get(getVehicles)
-  .post(authorize('Fleet Manager'), createVehicle);
+  .post(createVehicle);
 
 router
   .route('/:id')
   .get(getVehicle)
-  .put(authorize('Fleet Manager'), updateVehicle)
-  .delete(authorize('Fleet Manager'), deleteVehicle);
+  .put(updateVehicle)
+  .delete(deleteVehicle);
 
 module.exports = router;

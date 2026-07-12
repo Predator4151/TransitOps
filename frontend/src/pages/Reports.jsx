@@ -104,8 +104,8 @@ const Reports = () => {
       {
         label: 'ROI (%)',
         data: vehicles.map(v => v.roi),
-        backgroundColor: vehicles.map(v => v.roi >= 0 ? 'rgba(25, 135, 84, 0.8)' : 'rgba(220, 53, 69, 0.8)'),
-        borderRadius: 4
+        backgroundColor: vehicles.map(v => v.roi >= 0 ? 'rgba(16, 185, 129, 0.85)' : 'rgba(239, 68, 68, 0.85)'),
+        borderRadius: 12
       }
     ]
   };
@@ -119,7 +119,7 @@ const Reports = () => {
     scales: {
       y: {
         title: { display: true, text: 'Return on Investment (%)' },
-        grid: { color: 'rgba(0,0,0,0.05)' }
+        grid: { color: 'rgba(0,0,0,0.03)' }
       },
       x: { grid: { display: false } }
     }
@@ -132,8 +132,8 @@ const Reports = () => {
       {
         label: 'Fuel Efficiency (km/L)',
         data: vehicles.map(v => v.fuelEfficiency),
-        backgroundColor: 'rgba(13, 110, 253, 0.8)',
-        borderRadius: 4
+        backgroundColor: 'rgba(99, 102, 241, 0.85)',
+        borderRadius: 12
       }
     ]
   };
@@ -147,7 +147,7 @@ const Reports = () => {
     scales: {
       y: {
         title: { display: true, text: 'Efficiency (km/L)' },
-        grid: { color: 'rgba(0,0,0,0.05)' }
+        grid: { color: 'rgba(0,0,0,0.03)' }
       },
       x: { grid: { display: false } }
     }
@@ -160,7 +160,7 @@ const Reports = () => {
     datasets: [
       {
         data: Object.values(expenseBreakdown),
-        backgroundColor: ['#0D6EFD', '#FFC107', '#0dcaf0', '#DC3545', '#198754', '#6C757D'],
+        backgroundColor: ['#6366F1', '#F59E0B', '#0EA5E9', '#EF4444', '#10B981', '#64748B'],
         borderWidth: 1
       }
     ]
